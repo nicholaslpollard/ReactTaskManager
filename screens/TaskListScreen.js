@@ -4,7 +4,7 @@ import { View, FlatList, StyleSheet } from "react-native";
 import Header from "../components/Header";
 import TaskCard from "../components/TaskCard";
 
-// Main screen showing the list of tasks
+// Main screen showing list of tasks
 export default function TaskListScreen({ navigation, tasks, onComplete }) {
   return (
     <View style={styles.container}>
@@ -29,7 +29,7 @@ export default function TaskListScreen({ navigation, tasks, onComplete }) {
   );
 }
 
-// Styles for the task list screen
+// Styles for task list screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
