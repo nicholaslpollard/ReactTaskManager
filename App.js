@@ -1,64 +1,94 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Components
-import Header from "./components/Header";
-import Profile from "./components/Profile";
-import ToggleButton from "./components/ToggleButton";
+import TaskListScreen from "./screens/TaskListScreen";
+import TaskDetailsScreen from "./screens/TaskDetailsScreen";
+
+// Creates stack navigator for moving between screens
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // Example user name 
-  const userName = "James";
+  // Sample task data
+  const [tasks, setTasks] = useState([
+    {
+      id: "1",
+      title: "Study",
+      description: "Review components, props, state, and styling.",
+      details: "Spend time practicing React Native basics.",
+      image: require("./assets/study.jpg"),
+      completed: false,
+    },
+    {
+      id: "2",
+      title: "Homework",
+      description: "Complete the weekly mobile app assignment.",
+      details: "Work through the instructions and create the app.",
+      image: require("./assets/homework.jpg"),
+      completed: false,
+    },
+    {
+      id: "3",
+      title: "Shopping",
+      description: "Pick up food and drinks for the week.",
+      details: "Buy groceries for meals, snacks, and drinks.",
+      image: require("./assets/shopping.jpg"),
+      completed: false,
+    },
+    {
+      id: "4",
+      title: "Clean",
+      description: "Organize the desk and remove clutter.",
+      details: "Clean room and organize desk space",
+      image: require("./assets/clean.jpg"),
+      completed: false,
+    },
+  ]);
 
-  // State for the greeting message (starts empty)
-  const [greeting, setGreeting] = useState("");
+  // Mark a task as completed when button pressed
+  const markTaskCompleted = (taskId) => {
+    console.log("Marking task as completed:", taskId);
 
-  // Toggle the greeting when button pressed
-  const handleToggleGreeting = () => {
-    setGreeting((prev) => (prev === "" ? "Hello! Welcome to React Native" : ""));
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: true } : task
+      )
+    );
   };
 
   return (
-    // Main screen container
-    <View style={styles.container}>
-      {/* App title */}
-      <Header title="My First React Native App" />
+    // Holds navigation system 
+    <NavigationContainer>
+      <Stack.Navigator>
+        {/* Task list screen */}
+        <Stack.Screen
+          name="TaskList"
+          options={{ title: "React Task Manager" }}
+        >
+          {({ navigation }) => (
+            <TaskListScreen
+              navigation={navigation}
+              tasks={tasks}
+              onComplete={markTaskCompleted}
+            />
+          )}
+        </Stack.Screen>
 
-      <View style={styles.card}>
-        {/* Profile name */}
-        <Profile name={userName} />
-
-        {/* Button that toggles the greeting message */}
-        <ToggleButton label="Toggle Greeting" onPress={handleToggleGreeting} />
-
-        {greeting !== "" && <Text style={styles.greeting}>{greeting}</Text>}
-      </View>
-    </View>
+        {/* Task details screen */}
+        <Stack.Screen
+          name="TaskDetails"
+          options={{ title: "Task Details" }}
+        >
+          {({ route, navigation }) => (
+            <TaskDetailsScreen
+              route={route}
+              navigation={navigation}
+              tasks={tasks}
+              onComplete={markTaskCompleted}
+            />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-// Styles for layout and spacing
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    backgroundColor: "#f2f2f2",
-  },
-  card: {
-    width: "100%",
-    maxWidth: 360,
-    padding: 18,
-    borderRadius: 16,
-    alignItems: "center",
-    marginTop: 10,
-    backgroundColor: "#fff",
-    elevation: 4, // adds a shadow on Android
-  },
-  greeting: {
-    marginTop: 14,
-    fontSize: 16,
-    textAlign: "center",
-  },
-});
